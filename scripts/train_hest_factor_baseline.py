@@ -102,7 +102,7 @@ def main():
 
     print("Training Ridge regression baseline...")
 
-    model = Ridge(alpha=10.0)
+    model = Ridge(alpha=100.0)
     model.fit(X_train_s, y_train_s)
 
     print("Predicting...")
