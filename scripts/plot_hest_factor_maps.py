@@ -29,19 +29,24 @@ def plot_sample_factor(df_sample, sample_id, factor, out_dir):
     vmin = min(df_sample[true_col].min(), df_sample[pred_col].min())
     vmax = max(df_sample[true_col].max(), df_sample[pred_col].max())
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(
+        1, 2,
+        figsize=(14, 5.5),
+        constrained_layout=True
+    )
 
     sc1 = axes[0].scatter(
         df_sample["spatial_x"],
         df_sample["spatial_y"],
         c=df_sample[true_col],
-        s=8,
+        s=6,
+        marker="h"
         cmap="viridis",
         vmin=vmin,
         vmax=vmax,
         linewidths=0,
     )
-    axes[0].set_title(f"{sample_id} - TRUE {factor}")
+    axes[0].set_title(f"{sample_id} - TRUE {factor}", fontsize=12)
     axes[0].set_xlabel("spatial_x")
     axes[0].set_ylabel("spatial_y")
     axes[0].invert_yaxis()
@@ -51,26 +56,34 @@ def plot_sample_factor(df_sample, sample_id, factor, out_dir):
         df_sample["spatial_x"],
         df_sample["spatial_y"],
         c=df_sample[pred_col],
-        s=8,
+        s=6,
+        marker="h"
         cmap="viridis",
         vmin=vmin,
         vmax=vmax,
         linewidths=0,
     )
-    axes[1].set_title(f"{sample_id} - PRED {factor}")
+    axes[1].set_title(f"{sample_id} - PRED {factor}", fontsize=12)
     axes[1].set_xlabel("spatial_x")
     axes[1].set_ylabel("spatial_y")
     axes[1].invert_yaxis()
     axes[1].set_aspect("equal")
 
-    cbar = fig.colorbar(sc2, ax=axes.ravel().tolist(), shrink=0.9)
-    cbar.set_label(factor)
+    # cleaner shared colorbar
+    cbar = fig.colorbar(
+        sc2,
+        ax=axes,
+        location="right",
+        shrink=0.8,
+        pad=0.03,
+        fraction=0.04
+    )
+    cbar.set_label(factor, rotation=90, labelpad=10)
 
     fig.suptitle(f"{sample_id}: true vs predicted {factor}", fontsize=14)
-    fig.tight_layout()
 
     out_path = out_dir / f"{sample_id}_{factor}_true_vs_pred.png"
-    fig.savefig(out_path, dpi=200, bbox_inches="tight")
+    fig.savefig(out_path, dpi=220, bbox_inches="tight")
     plt.close(fig)
 
     print(f"Saved: {out_path}")
