@@ -84,4 +84,26 @@ with h5py.File(paths["patches"], "r") as f:
 print("  adata obs_names example:")
 print(adata.obs_names[:5].tolist())
 
+# 7. Try to identify patch-to-ST matching fields
+print("\nChecking barcode overlap...")
+
+with h5py.File(paths["patches"], "r") as f:
+    patch_barcodes = f["barcode"][:]
+
+# decode bytes / object values cleanly
+patch_barcodes = [
+    b[0].decode("utf-8") if isinstance(b[0], bytes) else str(b[0])
+    for b in patch_barcodes
+]
+
+adata_barcodes = set(adata.obs_names.astype(str))
+overlap = [b for b in patch_barcodes if b in adata_barcodes]
+
+print("  number of patch barcodes:", len(patch_barcodes))
+print("  number of adata obs names:", len(adata_barcodes))
+print("  overlap:", len(overlap))
+print("  first 10 patch barcodes:", patch_barcodes[:10])
+print("  first 10 overlapping barcodes:", overlap[:10])
+
+
 print("\nDone.")
