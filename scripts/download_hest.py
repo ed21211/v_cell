@@ -9,7 +9,7 @@ DATASET_DIR = os.path.join(SCRIPT_DIR, "..", "datasets")
 LOCAL_DIR = os.path.join(DATASET_DIR, "hest_ccrcc")
 SAMPLE_CSV = os.path.join(DATASET_DIR, "hest_metadata", "ccrcc_samples.csv")
 
-TEST_SINGLE_SAMPLE = True
+TEST_SINGLE_SAMPLE = False  # Set to True for sample testing. doenload only ONE sample.
 DOWNLOAD_XENIUM_EXTRAS = True
 DOWNLOAD_VISUALS = True
 
