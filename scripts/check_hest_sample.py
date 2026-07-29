@@ -67,4 +67,21 @@ with h5py.File(paths["patches"], "r") as f:
         if hasattr(obj, "shape"):
             print(f"  patches file dataset '{key}' shape:", obj.shape)
 
+# 6. Try to identify patch-to-ST matching fields
+print("\nChecking possible patch/ST matching fields...")
+
+with h5py.File(paths["patches"], "r") as f:
+    keys = list(f.keys())
+
+    for possible_key in ["barcode", "barcodes", "coords", "coordinates", "spatial"]:
+        if possible_key in keys:
+            data = f[possible_key][()]
+            print(f"  Found {possible_key}: shape={data.shape}")
+
+            if len(data) == adata.n_obs:
+                print(f"  {possible_key} count matches adata.n_obs")
+
+print("  adata obs_names example:")
+print(adata.obs_names[:5].tolist())
+
 print("\nDone.")
