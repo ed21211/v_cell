@@ -4,7 +4,9 @@ from huggingface_hub import hf_hub_download
 
 REPO_ID = "MahmoodLab/hest"
 METADATA_FILE = "HEST_v1_3_0.csv"
-OUTPUT_DIR = "../datasets/hest_metadata"   # adjust to your actual repo layout
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(SCRIPT_DIR, "..", "datasets", "hest_metadata")
 
 
 def load_metadata(filename):
@@ -38,11 +40,12 @@ if __name__ == "__main__":
     df = load_metadata(METADATA_FILE)
     summarize_organs(df)
 
+    # Change to just ["SCCRCC"] if want strict ccRCC-only (no papillary RCC)
     print("\n=== ccRCC (SCCRCC + PRCC) ===")
     ccrcc_df = filter_by_oncotree(df, ["SCCRCC", "PRCC"])
     print(ccrcc_df[["id", "organ", "tissue", "oncotree_code", "st_technology", "patient"]])
+
     ccrcc_path = os.path.join(OUTPUT_DIR, "ccrcc_samples.csv")
     ccrcc_df.to_csv(ccrcc_path, index=False)
     print(f"Saved to {ccrcc_path}")
-
     print(f"\nSUMMARY: ccRCC={len(ccrcc_df)} samples")
