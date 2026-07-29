@@ -12,7 +12,7 @@ from timm.data import resolve_data_config, create_transform
 from tqdm import tqdm
 
 
-REPO_MODEL = "hf_hub:paige-ai/Virchow"
+REPO_MODEL = "hf_hub:paige-ai/Virchow2"
 
 
 def decode_barcode(x):
