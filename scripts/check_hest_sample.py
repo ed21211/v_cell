@@ -4,7 +4,8 @@ import anndata as ad
 import pandas as pd
 import tifffile
 
-SAMPLE_ID = "TENX105"
+# SAMPLE_ID = "TENX105"
+SAMPLE_ID = "INT1"
 DATA_DIR = "../datasets/hest_ccrcc"
 
 paths = {

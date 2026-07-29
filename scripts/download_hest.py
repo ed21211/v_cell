@@ -58,11 +58,24 @@ def build_allow_patterns(df: pd.DataFrame) -> list[str]:
 def main():
     df = pd.read_csv(SAMPLE_CSV)
 
+    # if TEST_SINGLE_SAMPLE: // TAKES ORST LINE BUT IS NULL AT TENX105
+    #     df = df.head(1)
+    #     print(f"TEST MODE: downloading single sample only: {df['id'].tolist()}")
+    # else:
+    #     print(f"Downloading {len(df)} samples: {df['id'].tolist()}")
+
     if TEST_SINGLE_SAMPLE:
-        df = df.head(1)
+        TEST_SAMPLE_ID = "INT1"
+        df = df[df["id"].astype(str) == TEST_SAMPLE_ID]
+
+        if df.empty:
+            raise ValueError(f"Sample {TEST_SAMPLE_ID} not found in {SAMPLE_CSV}")
+
         print(f"TEST MODE: downloading single sample only: {df['id'].tolist()}")
     else:
-        print(f"Downloading {len(df)} samples: {df['id'].tolist()}")
+        # optional: skip TENX105 so you only download Visium ccRCC samples
+        df = df[df["st_technology"].astype(str).str.lower() == "visium"]
+        print(f"Downloading {len(df)} Visium ccRCC samples: {df['id'].tolist()}")
 
     patterns = build_allow_patterns(df)
 
