@@ -40,7 +40,7 @@ def plot_sample_factor(df_sample, sample_id, factor, out_dir):
         df_sample["spatial_y"],
         c=df_sample[true_col],
         s=6,
-        marker="h"
+        marker="h",
         cmap="viridis",
         vmin=vmin,
         vmax=vmax,
@@ -57,7 +57,7 @@ def plot_sample_factor(df_sample, sample_id, factor, out_dir):
         df_sample["spatial_y"],
         c=df_sample[pred_col],
         s=6,
-        marker="h"
+        marker="h",
         cmap="viridis",
         vmin=vmin,
         vmax=vmax,
