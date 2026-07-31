@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # Change to just ["SCCRCC"] if want strict ccRCC-only (no papillary RCC)
     print("\n=== ccRCC (SCCRCC + PRCC) ===")
     ccrcc_df = filter_by_oncotree(df, ["SCCRCC", "PRCC"])
-    print(ccrcc_df[["id", "organ", "tissue", "oncotree_code", "st_technology", "patient"]])
+    print(ccrcc_df[["id", "organ", "tissue", "oncotree_code", "st_technology", "patient", "species"]])
 
     ccrcc_path = os.path.join(OUTPUT_DIR, "ccrcc_samples.csv")
     ccrcc_df.to_csv(ccrcc_path, index=False)
