@@ -6,11 +6,13 @@ REPO_ID = "MahmoodLab/hest"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATASET_DIR = os.path.join(SCRIPT_DIR, "..", "datasets")
-LOCAL_DIR = os.path.join(DATASET_DIR, "hest_ccrcc")
-SAMPLE_CSV = os.path.join(DATASET_DIR, "hest_metadata", "ccrcc_samples.csv")
 
-TEST_SINGLE_SAMPLE = False  # Set to True for sample testing. doenload only ONE sample.
-DOWNLOAD_XENIUM_EXTRAS = True
+LOCAL_DIR = os.path.join(DATASET_DIR, "hest_skin_cancer")
+
+SAMPLE_CSV = os.path.join(DATASET_DIR, "hest_metadata", "skin_cancer_visium_samples.csv")
+
+TEST_SINGLE_SAMPLE = True 
+DOWNLOAD_XENIUM_EXTRAS = False
 DOWNLOAD_VISUALS = True
 
 
@@ -21,7 +23,6 @@ def build_allow_patterns(df: pd.DataFrame) -> list[str]:
         sid = str(row["id"])
         tech = str(row.get("st_technology", "")).lower()
 
-        # Core files needed for H&E + ST modelling
         patterns.extend([
             f"metadata/{sid}.json",
             f"wsis/{sid}.tif",
@@ -29,7 +30,6 @@ def build_allow_patterns(df: pd.DataFrame) -> list[str]:
             f"patches/{sid}.h5",
         ])
 
-        # Useful for inspection/debugging, not always needed for training
         if DOWNLOAD_VISUALS:
             patterns.extend([
                 f"thumbnails/{sid}_downscaled_fullres.jpeg",
@@ -40,7 +40,6 @@ def build_allow_patterns(df: pd.DataFrame) -> list[str]:
                 f"pixel_size_vis/{sid}_pixel_size_vis.png",
             ])
 
-        # Xenium samples have transcript-level and segmentation files
         if DOWNLOAD_XENIUM_EXTRAS and "xenium" in tech:
             patterns.extend([
                 f"transcripts/{sid}_transcripts.parquet",
@@ -58,24 +57,23 @@ def build_allow_patterns(df: pd.DataFrame) -> list[str]:
 def main():
     df = pd.read_csv(SAMPLE_CSV)
 
-    # if TEST_SINGLE_SAMPLE: // TAKES ORST LINE BUT IS NULL AT TENX105
-    #     df = df.head(1)
-    #     print(f"TEST MODE: downloading single sample only: {df['id'].tolist()}")
-    # else:
-    #     print(f"Downloading {len(df)} samples: {df['id'].tolist()}")
+    print(f"Loaded sample CSV: {SAMPLE_CSV}")
+    print(f"Rows in CSV: {len(df)}")
+    print(df[["id", "organ", "tissue", "oncotree_code", "disease_state", "st_technology", "patient"]])
+
+    # Keep Visium only for now
+    df = df[df["st_technology"].astype(str).str.lower() == "visium"].copy()
+
+    if df.empty:
+        raise ValueError("No Visium samples found in skin cancer CSV.")
 
     if TEST_SINGLE_SAMPLE:
-        TEST_SAMPLE_ID = "INT1"
+        TEST_SAMPLE_ID = str(df.iloc[0]["id"])
         df = df[df["id"].astype(str) == TEST_SAMPLE_ID]
 
-        if df.empty:
-            raise ValueError(f"Sample {TEST_SAMPLE_ID} not found in {SAMPLE_CSV}")
-
-        print(f"TEST MODE: downloading single sample only: {df['id'].tolist()}")
+        print(f"\nTEST MODE: downloading one skin sample only: {df['id'].tolist()}")
     else:
-        # optional: skip TENX105 so you only download Visium ccRCC samples
-        df = df[df["st_technology"].astype(str).str.lower() == "visium"]
-        print(f"Downloading {len(df)} Visium ccRCC samples: {df['id'].tolist()}")
+        print(f"\nDownloading {len(df)} Visium skin cancer samples: {df['id'].tolist()}")
 
     patterns = build_allow_patterns(df)
 
